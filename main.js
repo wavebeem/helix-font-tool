@@ -1,6 +1,10 @@
 const FONT_WIDTH = 6;
 const FONT_HEIGHT = 8;
 
+function globalize(obj) {
+  Object.assign(globalThis, obj);
+}
+
 function main() {
   customElements.define("helix-files", HelixFilesElement);
   customElements.define("helix-preview", HelixPreviewElement);
@@ -54,8 +58,8 @@ class HelixPreviewElement extends HTMLElement {
       this._update();
     };
     this.img.src = "font5x7.png";
-    // ---[ HACK ]--------
-    Object.assign(window, {
+
+    globalize({
       vCtx: this.vCtx,
       hCtx: this.hCtx,
       img: this.img
@@ -125,53 +129,59 @@ class HelixFontElement extends HTMLElement {
     });
   }
 
-  // for colc in range(colmax):
-  //   for rowc in range(rowmax):
-  //     line = ""
-  //     for fontwc in range(fontw):
-  //       val=0
-  //       for fonthc in range(fonth):
-  //         b = 1 if im[fontw*rowc+fontwc][fonth*(colmax-1)-fonth*colc+fonthc][0]<128 else 0
-  //         val = (val<<1)|b
-  //       line += '0x%02X' % val + ', '
-  //     print (line)
-
-  // Let's redo this math from scratch; I need to iterate starting at the top
-  // right, going down, then left. This will be over the "cels", then the two
-  // innermost for-loops will iterate over the individual pixels.
   _update(imageData) {
-    const { height } = imageData;
     const array = imageDataToArray(imageData);
-    console.log(array);
     const lines = [];
-    const COL_MAX = 32;
-    const ROW_MAX = 8;
-    for (let col = 0; col < COL_MAX; col++) {
-      for (let row = 0; row < ROW_MAX; row++) {
+    const COL_MAX = 8;
+    const ROW_MAX = 32;
+    for (let outerCol = COL_MAX - 1; outerCol >= 0; outerCol--) {
+      for (let outerRow = 0; outerRow < ROW_MAX; outerRow++) {
         const line = [];
-        for (let fontW = 0; fontW < FONT_WIDTH; fontW++) {
+        for (let innerRow = 0; innerRow < FONT_WIDTH; innerRow++) {
           let curByte = 0;
-          for (let fontH = 0; fontH < FONT_HEIGHT; fontH++) {
-            // [fontw*rowc+fontwc][fonth*(colmax-1)-fonth*colc+fonthc]
-            const i = FONT_WIDTH * row + fontW;
-            const j = FONT_HEIGHT * (height - 1) - FONT_HEIGHT * col + fontH;
-            const bit = array[i][j];
+          for (let innerCol = 0; innerCol < FONT_HEIGHT; innerCol++) {
+            const x = outerCol * FONT_HEIGHT + innerCol;
+            const y = outerRow * FONT_WIDTH + innerRow;
+            const bit = array[y][x];
             curByte = (curByte << 1) | bit;
           }
           line.push(formatByte(curByte));
         }
-        // console.log(line.join(", "));
         lines.push(line.join(", "));
       }
     }
-    const code = lines.join("\n") + "\n";
-    console.log(code);
+    const code = formatLines(lines);
     this.querySelector("textarea").value = code;
   }
 }
 
+function formatLines(lines) {
+  return `\
+// This is the 'classic' fixed-space bitmap font for Adafruit_GFX since 1.0.
+// See gfxfont.h for newer custom bitmap font info.
+
+#ifndef FONT5X7_H
+#define FONT5X7_H
+
+#ifdef __AVR__
+ #include <avr/io.h>
+ #include <avr/pgmspace.h>
+#elif defined(ESP8266)
+ #include <pgmspace.h>
+#else
+ #define PROGMEM
+#endif
+
+// Standard ASCII 5x7 font
+
+static const unsigned char font[] PROGMEM = {
+${lines.join("\n")}
+};
+#endif // FONT5X7_H
+`;
+}
+
 function formatByte(b) {
-  console.log(b);
   return "0x" + b.toString(16).padStart(2, "0");
 }
 
@@ -193,9 +203,7 @@ function imageDataToArray(imageData) {
 }
 
 // ---[ HACK ]---------
-Object.assign(window, {
-  imageDataToArray
-});
+globalize({ imageDataToArray });
 
 main();
 
