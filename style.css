@@ -52,7 +52,7 @@ footer {
 }
 
 .grid-2col {
-  /* grid-template-columns: 1rem 1rem; */
+  grid-template-columns: 1fr 1fr;
 }
 
 .margin-0 {

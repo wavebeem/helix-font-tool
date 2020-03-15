@@ -16,11 +16,40 @@ function getTemplate(selector) {
   return document.importNode(template.content, true);
 }
 
+function chooseFile(cb) {
+  const input = document.createElement(input);
+  input.type = "file";
+  document.body.appendChild(input);
+  input.onclick = cb;
+  input.click();
+}
+
 class HelixFilesElement extends HTMLElement {
   connectedCallback() {
     this.innerHTML = "";
     this.appendChild(getTemplate("#template-helix-files-element"));
-    this.input = this.querySelector("input");
+    this.button0 = this.querySelector("[data-file='button0']");
+    this.button1 = this.querySelector("[data-file='button1']");
+    this.file0 = this.querySelector("[data-file='file0']");
+    this.file1 = this.querySelector("[data-file='file1']");
+    this.label0 = this.querySelector("[data-file='label0']");
+    this.label1 = this.querySelector("[data-file='label1']");
+    this.button0.addEventListener("click", _event => {
+      this.file0.click();
+    });
+    this.button1.addEventListener("click", _event => {
+      this.file1.click();
+    });
+    this.file0.addEventListener("change", event => {
+      const file = event.target.files[0];
+      const obj = { detail: { file } };
+      this.dispatchEvent(new CustomEvent("change-file0", obj));
+    });
+    this.file1.addEventListener("change", event => {
+      const file = event.target.files[0];
+      const obj = { detail: { file } };
+      this.dispatchEvent(new CustomEvent("change-file1", obj));
+    });
   }
 }
 
@@ -59,29 +88,27 @@ class HelixPreviewElement extends HTMLElement {
     };
     this.img.src = "font5x7.png";
 
+    const files = document.querySelector("#files");
+    files.addEventListener("change-file0", event => {
+      console.log("change-file0", event.detail.file);
+      createImageBitmap(event.detail.file).then(bitmap => {
+        this.bitmap0 = bitmap;
+        this._update();
+      });
+    });
+    files.addEventListener("change-file1", event => {
+      console.log("change-file1", event.detail.file);
+      createImageBitmap(event.detail.file).then(bitmap => {
+        this.bitmap1 = bitmap;
+        this._update();
+      });
+    });
+
     globalize({
       vCtx: this.vCtx,
       hCtx: this.hCtx,
       img: this.img
     });
-  }
-
-  get file0() {
-    return this._file0;
-  }
-
-  set file0(file0) {
-    this._file0 = file0;
-    this._update();
-  }
-
-  get file1() {
-    return this._file1;
-  }
-
-  set file1(file1) {
-    this._file1 = file1;
-    this._update();
   }
 
   _update() {
@@ -100,6 +127,12 @@ class HelixPreviewElement extends HTMLElement {
     this.vCtx.fillStyle = "var(--bit-color0)";
     this.vCtx.fillRect(0, 0, this.vCanvas.width, this.vCanvas.height);
     this._drawRotated(Math.PI / 2);
+    if (this.bitmap0) {
+      this.vCtx.drawImage(this.bitmap0, 0, 0);
+    }
+    if (this.bitmap1) {
+      this.vCtx.drawImage(this.bitmap1, 0, 96);
+    }
     const imageData = this.vCtx.getImageData(
       0,
       0,
@@ -125,26 +158,18 @@ class HelixFontElement extends HTMLElement {
     this.innerHTML = "";
     this.classList.add("grid", "gap-1rem");
     this.appendChild(getTemplate("#template-helix-font-element"));
-    document.querySelector("#preview").addEventListener(
-      "update",
-      event => {
-        this._update(event.detail.imageData);
-      },
-      false
-    );
-    this.querySelector("button").addEventListener(
-      "click",
-      _event => {
-        const textarea = this.querySelector("textarea");
-        textarea.select();
-        document.execCommand("copy");
-        setTimeout(() => {
-          textarea.scrollTop = 0;
-          document.getSelection().removeAllRanges();
-        }, 100);
-      },
-      false
-    );
+    document.querySelector("#preview").addEventListener("update", event => {
+      this._update(event.detail.imageData);
+    });
+    this.querySelector("button").addEventListener("click", _event => {
+      const textarea = this.querySelector("textarea");
+      textarea.select();
+      document.execCommand("copy");
+      setTimeout(() => {
+        textarea.scrollTop = 0;
+        document.getSelection().removeAllRanges();
+      }, 100);
+    });
   }
 
   _update(imageData) {
@@ -221,8 +246,3 @@ function imageDataToArray(imageData) {
 globalize({ imageDataToArray });
 
 main();
-
-// <helix-file id="file1"></file-uploader>
-// <helix-file id="file2"></file-uploader>
-// <helix-preview></helix-preview>
-// <helix-font></helix-font>

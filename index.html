@@ -26,7 +26,7 @@
       <code class="bit-code">#ffffff</code> white. White pixels will be drawn on
       the OLED display.
     </p>
-    <helix-files></helix-files>
+    <helix-files id="files"></helix-files>
 
     <h2>Preview</h2>
     <helix-preview id="preview" class="bit-card"></helix-preview>
@@ -41,8 +41,16 @@
 
     <template id="template-helix-files-element">
       <div class="grid gap-1rem grid-2col">
-        <input data-file="0" type="file" class="bit-button pal-green" />
-        <input data-file="1" type="file" class="bit-button pal-green" />
+        <button data-file="button0" type="button" class="bit-button pal-green">
+          Choose file 0...
+        </button>
+        <span data-file="label0">No file selected</span>
+        <input hidden type="file" data-file="file0" />
+        <button data-file="button1" type="button" class="bit-button pal-green">
+          Choose file 1...
+        </button>
+        <span data-file="label1">No file selected</span>
+        <input hidden type="file" data-file="file1" />
       </div>
     </template>
 
