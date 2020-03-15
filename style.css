@@ -63,6 +63,10 @@ footer {
   border: 0;
 }
 
+.text-center {
+  text-align: center;
+}
+
 .size-min {
   width: min-content;
   height: min-content;
