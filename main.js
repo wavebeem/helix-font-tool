@@ -42,11 +42,13 @@ class HelixFilesElement extends HTMLElement {
     });
     this.file0.addEventListener("change", event => {
       const file = event.target.files[0];
+      this.label0.textContent = file.name;
       const obj = { detail: { file } };
       this.dispatchEvent(new CustomEvent("change-file0", obj));
     });
     this.file1.addEventListener("change", event => {
       const file = event.target.files[0];
+      this.label1.textContent = file.name;
       const obj = { detail: { file } };
       this.dispatchEvent(new CustomEvent("change-file1", obj));
     });
@@ -60,8 +62,6 @@ class HelixPreviewElement extends HTMLElement {
     this.appendChild(getTemplate("#template-helix-preview-element"));
     this.hCanvas = this.querySelector("[data-orientation='horizontal']");
     this.vCanvas = this.querySelector("[data-orientation='vertical']");
-    // this.longSize = 192;
-    // this.shortSize = 192;
     this.longSize = 192;
     this.shortSize = 64;
     this.scale = 3;
@@ -123,10 +123,16 @@ class HelixPreviewElement extends HTMLElement {
     this.hCtx.fillStyle = "var(--bit-color0)";
     this.hCtx.fillRect(0, 0, this.hCanvas.width, this.hCanvas.height);
     this.hCtx.drawImage(this.img, 0, 0);
+    if (this.bitmap0) {
+      this._drawRotated(this.hCtx, this.bitmap0, 0, 0, -Math.PI / 2);
+    }
+    if (this.bitmap1) {
+      this._drawRotated(this.hCtx, this.bitmap1, 0, 96, -Math.PI / 2);
+    }
 
     this.vCtx.fillStyle = "var(--bit-color0)";
     this.vCtx.fillRect(0, 0, this.vCanvas.width, this.vCanvas.height);
-    this._drawRotated(Math.PI / 2);
+    this._drawRotated(this.vCtx, this.img, 0, 0, Math.PI / 2);
     if (this.bitmap0) {
       this.vCtx.drawImage(this.bitmap0, 0, 0);
     }
@@ -143,13 +149,13 @@ class HelixPreviewElement extends HTMLElement {
     this.dispatchEvent(event);
   }
 
-  _drawRotated(radians) {
-    const { width, height } = this.vCanvas;
-    this.vCtx.save();
-    this.vCtx.translate(width / 2, height / 2);
-    this.vCtx.rotate(radians);
-    this.vCtx.drawImage(this.img, -height / 2, -width / 2);
-    this.vCtx.restore();
+  _drawRotated(ctx, img, x, y, radians) {
+    const { width, height } = ctx.canvas;
+    ctx.save();
+    ctx.translate(width / 2, height / 2);
+    ctx.rotate(radians);
+    ctx.drawImage(img, x - height / 2, y - width / 2);
+    ctx.restore();
   }
 }
 
