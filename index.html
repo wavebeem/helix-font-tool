@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" class="bit-root">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Helix Font Tool</title>
+    <script type="module" src="main.js"></script>
+    <link rel="stylesheet" href="1bit-ui.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Helix Font Tool</h1>
+
+    <p>TODO: Description</p>
+
+    <h2>Upload Images</h2>
+    <p>
+      (TODO: Instructions) Images must be exactly 32&times;126 and pure
+      <code class="bit-code">#000000</code> black and
+      <code class="bit-code">#ffffff</code> white. White pixels will be drawn on
+      the OLED display.
+    </p>
+    <helix-files></helix-files>
+
+    <h2>Preview</h2>
+    <helix-preview id="preview" class="bit-card"></helix-preview>
+
+    <h2>helixfont.h</h2>
+    <helix-font></helix-font>
+
+    <footer>
+      &copy; 2020
+      <a href="https://www.mockbrian.com" class="bit-link">Brian Mock</a>
+    </footer>
+
+    <template id="template-helix-files-element">
+      <input data-file="0" type="file" class="bit-button" />
+      <input data-file="1" type="file" class="bit-button" />
+    </template>
+
+    <template id="template-helix-preview-element">
+      <canvas data-orientation="horizontal"></canvas>
+      <canvas data-orientation="vertical"></canvas>
+    </template>
+
+    <template id="template-helix-font-element">
+      <button class="bit-button">Copy to clipboard</button>
+      <textarea readonly class="bit-input"></textarea>
+    </template>
+  </body>
+</html>

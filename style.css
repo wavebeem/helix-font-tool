@@ -1,0 +1,46 @@
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "avenir next", avenir,
+    "helvetica neue", helvetica, ubuntu, roboto, noto, "segoe ui", arial,
+    sans-serif;
+  --font-monospace: "JetBrains Mono", "Cascadia Code", "Menlo", "Consolas",
+    monospace;
+  --bit-color0: #000;
+  --bit-color1: #fff;
+}
+
+helix-file,
+helix-preview,
+helix-font {
+  display: block;
+}
+
+helix-font textarea {
+  resize: none;
+}
+
+.helix-preview {
+  display: grid;
+  grid-gap: 1rem;
+  width: min-content;
+  height: min-content;
+}
+
+helix-font,
+body {
+  display: grid;
+  /* grid-gap: 1rem; */
+}
+
+body {
+  max-width: 600px;
+  margin: 0 auto;
+  font-family: var(--font-sans);
+  padding: 1rem;
+  line-height: 1.5;
+}
+
+code,
+pre,
+textarea {
+  font-family: var(--font-monospace);
+}
