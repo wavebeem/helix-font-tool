@@ -135,6 +135,10 @@ class HelixFontElement extends HTMLElement {
   //         val = (val<<1)|b
   //       line += '0x%02X' % val + ', '
   //     print (line)
+
+  // Let's redo this math from scratch; I need to iterate starting at the top
+  // right, going down, then left. This will be over the "cels", then the two
+  // innermost for-loops will iterate over the individual pixels.
   _update(imageData) {
     const { height } = imageData;
     const array = imageDataToArray(imageData);
