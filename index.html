@@ -11,6 +11,12 @@
   <body>
     <h1>Helix Font Tool</h1>
 
+    <p>
+      by <a href="https://twitter.com/wavebeem" class="bit-link">@wavebeem</a>
+    </p>
+
+    <hr class="bit-hr" />
+
     <p>TODO: Description</p>
 
     <h2>Upload Images</h2>
@@ -25,7 +31,7 @@
     <h2>Preview</h2>
     <helix-preview id="preview" class="bit-card"></helix-preview>
 
-    <h2>helixfont.h</h2>
+    <h2>Code</h2>
     <helix-font></helix-font>
 
     <footer>
@@ -34,8 +40,10 @@
     </footer>
 
     <template id="template-helix-files-element">
-      <input data-file="0" type="file" class="bit-button" />
-      <input data-file="1" type="file" class="bit-button" />
+      <div class="grid gap-1rem grid-2col">
+        <input data-file="0" type="file" class="bit-button pal-green" />
+        <input data-file="1" type="file" class="bit-button pal-green" />
+      </div>
     </template>
 
     <template id="template-helix-preview-element">
@@ -44,8 +52,10 @@
     </template>
 
     <template id="template-helix-font-element">
-      <button type="button" class="bit-button">Copy to clipboard</button>
-      <textarea readonly class="bit-input"></textarea>
+      <button type="button" class="bit-button pal-green">
+        Copy helixfont.h to clipboard
+      </button>
+      <textarea readonly class="bit-pre border-0 margin-0" rows="6"></textarea>
     </template>
   </body>
 </html>

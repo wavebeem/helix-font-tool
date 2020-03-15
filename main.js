@@ -27,7 +27,7 @@ class HelixFilesElement extends HTMLElement {
 class HelixPreviewElement extends HTMLElement {
   connectedCallback() {
     this.innerHTML = "";
-    this.classList.add("helix-preview");
+    this.classList.add("size-min", "grid", "gap-1rem");
     this.appendChild(getTemplate("#template-helix-preview-element"));
     this.hCanvas = this.querySelector("[data-orientation='horizontal']");
     this.vCanvas = this.querySelector("[data-orientation='vertical']");
@@ -123,10 +123,28 @@ class HelixPreviewElement extends HTMLElement {
 class HelixFontElement extends HTMLElement {
   connectedCallback() {
     this.innerHTML = "";
+    this.classList.add("grid", "gap-1rem");
     this.appendChild(getTemplate("#template-helix-font-element"));
-    document.querySelector("#preview").addEventListener("update", event => {
-      this._update(event.detail.imageData);
-    });
+    document.querySelector("#preview").addEventListener(
+      "update",
+      event => {
+        this._update(event.detail.imageData);
+      },
+      false
+    );
+    this.querySelector("button").addEventListener(
+      "click",
+      _event => {
+        const textarea = this.querySelector("textarea");
+        textarea.select();
+        document.execCommand("copy");
+        setTimeout(() => {
+          textarea.scrollTop = 0;
+          document.getSelection().removeAllRanges();
+        }, 100);
+      },
+      false
+    );
   }
 
   _update(imageData) {
@@ -147,37 +165,34 @@ class HelixFontElement extends HTMLElement {
           }
           line.push(formatByte(curByte));
         }
-        lines.push(line.join(", "));
+        lines.push("    " + line.join(", ") + ",");
       }
     }
     const code = formatLines(lines);
-    this.querySelector("textarea").value = code;
+    const textarea = this.querySelector("textarea");
+    textarea.value = code;
+    textarea.scrollTop = 0;
   }
 }
 
 function formatLines(lines) {
   return `\
-// This is the 'classic' fixed-space bitmap font for Adafruit_GFX since 1.0.
-// See gfxfont.h for newer custom bitmap font info.
+// helixfont.h
 
-#ifndef FONT5X7_H
-#define FONT5X7_H
+#pragma once
 
-#ifdef __AVR__
- #include <avr/io.h>
- #include <avr/pgmspace.h>
+#if defined(__AVR__)
+    #include <avr/io.h>
+    #include <avr/pgmspace.h>
 #elif defined(ESP8266)
- #include <pgmspace.h>
+    #include <pgmspace.h>
 #else
- #define PROGMEM
+    #define PROGMEM
 #endif
-
-// Standard ASCII 5x7 font
 
 static const unsigned char font[] PROGMEM = {
 ${lines.join("\n")}
 };
-#endif // FONT5X7_H
 `;
 }
 
