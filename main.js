@@ -29,14 +29,14 @@ class HelixFilesElement extends HTMLElement {
     this.file0.addEventListener("change", event => {
       event.preventDefault();
       const file = event.target.files[0];
-      this.button0.textContent = `Change file 0... [${file.name}]`;
+      this.button0.textContent = `Change image 0... (${file.name})`;
       const obj = { detail: { file } };
       this.dispatchEvent(new CustomEvent(`change-file0`, obj));
     });
     this.file1.addEventListener("change", event => {
       event.preventDefault();
       const file = event.target.files[0];
-      this.button1.textContent = `Change file 1... [${file.name}]`;
+      this.button1.textContent = `Change image 1... (${file.name})`;
       const obj = { detail: { file } };
       this.dispatchEvent(new CustomEvent(`change-file1`, obj));
     });
@@ -75,7 +75,7 @@ class HelixFilesElement extends HTMLElement {
 class HelixPreviewElement extends HTMLElement {
   connectedCallback() {
     this.innerHTML = "";
-    this.classList.add("size-min", "grid", "gap-1rem");
+    this.classList.add("grid", "gap-1rem");
     this.appendChild(getTemplate("#template-helix-preview-element"));
     this.hCanvas = this.querySelector("[data-orientation='horizontal']");
     this.vCanvas = this.querySelector("[data-orientation='vertical']");
@@ -213,8 +213,6 @@ class HelixFontElement extends HTMLElement {
 
 function formatLines(lines) {
   return `\
-// helixfont.h
-
 #pragma once
 
 #if defined(__AVR__)

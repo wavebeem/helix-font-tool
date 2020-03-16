@@ -39,7 +39,7 @@ textarea {
 }
 
 body {
-  max-width: min-content;
+  max-width: 800px;
   margin: 0 auto;
   font-family: var(--font-sans);
   padding: 1rem;
@@ -55,6 +55,14 @@ textarea {
 
 footer {
   margin: 1rem 0;
+}
+
+.margin-bottom-0 {
+  margin-bottom: 0;
+}
+
+.margin-bottom-1rem {
+  margin-bottom: 1rem;
 }
 
 .gap-1rem {
@@ -80,11 +88,6 @@ footer {
 
 .text-center {
   text-align: center;
-}
-
-.size-min {
-  width: min-content;
-  height: min-content;
 }
 
 .screen {

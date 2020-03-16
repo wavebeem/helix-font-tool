@@ -3,36 +3,63 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Helix Font Tool</title>
+    <title>Helix Font for QMK</title>
     <script type="module" src="main.js"></script>
     <link rel="stylesheet" href="1bit-ui.css" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <h1>Helix Font Tool</h1>
+    <h1 class="margin-bottom-0">Helix Font for QMK</h1>
 
-    <p>
+    <div class="margin-bottom-1rem">
       by <a href="https://twitter.com/wavebeem" class="bit-link">@wavebeem</a>
-    </p>
+    </div>
 
     <hr class="bit-hr" />
 
-    <p>TODO: Description</p>
+    <p>
+      This tool can be used embed two images within your Helix QMK keyboard
+      font. It also contains code snippets on how to display those images.
+    </p>
 
     <h2>Upload Images</h2>
     <p>
-      (TODO: Instructions) Images must be exactly 32&times;126 and pure
-      <code class="bit-code">#000000</code> black and
-      <code class="bit-code">#ffffff</code> white. White pixels will be drawn on
-      the OLED display.
+      Images should be 32px wide by 96px tall in black and white. Actual colors
+      on your OLED screen may vary.
     </p>
     <helix-files id="files"></helix-files>
 
-    <h2>Preview</h2>
+    <h2>Preview Font</h2>
     <helix-preview id="preview" class="bit-card"></helix-preview>
 
-    <h2>Code</h2>
+    <h2>Font Code</h2>
+    <p>
+      Save this code as <code class="bit-code">helixfont.h</code> or
+      <code class="bit-code">glcdfont.c</code> depending on your QMK setup.
+    </p>
     <helix-font></helix-font>
+
+    <h2>Render Image 0 Code</h2>
+    <p>Use this code to print image 0 to your OLED display.</p>
+    <pre class="bit-pre pal-yellow">
+matrix_write_P(matrix, PSTR(
+    "    \x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f\n"
+    "    \xa0\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf\n"
+    "    \xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\n"
+    "    \xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef"
+));</pre
+    >
+
+    <h2>Render Image 1 Code</h2>
+    <p>Use this code to print image 1 to your OLED display.</p>
+    <pre class="bit-pre pal-purple">
+matrix_write_P(matrix, PSTR(
+    "    \x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f\n"
+    "    \xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\n"
+    "    \xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde\xdf\n"
+    "    \xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe\xff"
+));</pre
+    >
 
     <footer>
       &copy; 2020
@@ -42,10 +69,10 @@
     <template id="template-helix-files-element">
       <div class="grid gap-1rem grid-2col">
         <button data-file="button0" type="button" class="bit-button pal-yellow">
-          Choose file 0...
+          Choose image 0...
         </button>
         <button data-file="button1" type="button" class="bit-button pal-purple">
-          Choose file 1...
+          Choose image 1...
         </button>
         <input hidden type="file" data-file="file0" />
         <input hidden type="file" data-file="file1" />
@@ -59,7 +86,7 @@
 
     <template id="template-helix-font-element">
       <button type="button" class="bit-button pal-green">
-        Copy helixfont.h to clipboard
+        Copy font code to clipboard
       </button>
       <textarea readonly class="bit-pre border-0 margin-0" rows="6"></textarea>
     </template>
