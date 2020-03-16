@@ -86,3 +86,7 @@ footer {
   width: min-content;
   height: min-content;
 }
+
+.screen {
+  box-shadow: 0 0 0 1px hsla(190, 80%, 70%, 0.2);
+}
