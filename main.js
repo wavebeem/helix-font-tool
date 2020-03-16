@@ -5,23 +5,9 @@ const ROW_MAX = 32;
 const IMAGE_LONG_SIZE = 192;
 const IMAGE_SHORT_SIZE = 64;
 
-function main() {
-  customElements.define("helix-files", HelixFilesElement);
-  customElements.define("helix-preview", HelixPreviewElement);
-  customElements.define("helix-font", HelixFontElement);
-}
-
 function getTemplate(selector) {
   const template = document.querySelector(selector);
   return document.importNode(template.content, true);
-}
-
-function chooseFile(cb) {
-  const input = document.createElement(input);
-  input.type = "file";
-  document.body.appendChild(input);
-  input.onclick = cb;
-  input.click();
 }
 
 class HelixFilesElement extends HTMLElement {
@@ -40,19 +26,19 @@ class HelixFilesElement extends HTMLElement {
     this.button1.addEventListener("click", _event => {
       this.file1.click();
     });
-    const dispatchChangeFileEvent = (index, file) => {
-      const key = `button${index}`;
-      this[key].textContent = `Change file ${index}... [${file.name}]`;
-      const obj = { detail: { file } };
-      this.dispatchEvent(new CustomEvent(`change-file${index}`, obj));
-    };
     this.file0.addEventListener("change", event => {
       event.preventDefault();
-      dispatchChangeFileEvent(0, event.target.files[0]);
+      const file = event.target.files[0];
+      this.button0.textContent = `Change file 0... [${file.name}]`;
+      const obj = { detail: { file } };
+      this.dispatchEvent(new CustomEvent(`change-file0`, obj));
     });
     this.file1.addEventListener("change", event => {
       event.preventDefault();
-      dispatchChangeFileEvent(1, event.target.files[0]);
+      const file = event.target.files[0];
+      this.button1.textContent = `Change file 1... [${file.name}]`;
+      const obj = { detail: { file } };
+      this.dispatchEvent(new CustomEvent(`change-file0`, obj));
     });
     const createDragHandler = element => event => {
       event.preventDefault();
@@ -60,8 +46,7 @@ class HelixFilesElement extends HTMLElement {
       event.dataTransfer.dropEffect = "copy";
       const isDragging =
         event.type === "dragover" || event.type === "dragenter";
-      element.classList.toggle("pal-white", isDragging);
-      element.classList.toggle("pal-green", !isDragging);
+      element.classList.toggle("dnd-hover", isDragging);
     };
     const eventNames = [
       "drag",
@@ -268,4 +253,6 @@ function imageDataToArray(imageData) {
   return array;
 }
 
-main();
+customElements.define("helix-files", HelixFilesElement);
+customElements.define("helix-preview", HelixPreviewElement);
+customElements.define("helix-font", HelixFontElement);

@@ -9,13 +9,23 @@
 }
 
 .pal-green {
-  --bit-color0: hsl(150, 30%, 20%);
-  --bit-color1: hsl(150, 60%, 90%);
+  --bit-color0: hsl(130, 30%, 20%);
+  --bit-color1: hsl(130, 60%, 95%);
 }
 
-.pal-white {
-  --bit-color0: hsl(0, 0%, 30%);
-  --bit-color1: hsl(0, 0%, 100%);
+.pal-yellow {
+  --bit-color0: hsl(60, 30%, 20%);
+  --bit-color1: hsl(60, 60%, 95%);
+}
+
+.pal-purple {
+  --bit-color0: hsl(280, 30%, 20%);
+  --bit-color1: hsl(280, 60%, 95%);
+}
+
+.dnd-hover {
+  border-style: dashed;
+  box-shadow: none;
 }
 
 helix-file,
