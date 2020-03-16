@@ -1,9 +1,9 @@
 const FONT_WIDTH = 6;
 const FONT_HEIGHT = 8;
-
-function globalize(obj) {
-  Object.assign(globalThis, obj);
-}
+const COL_MAX = 8;
+const ROW_MAX = 32;
+const IMAGE_LONG_SIZE = 192;
+const IMAGE_SHORT_SIZE = 64;
 
 function main() {
   customElements.define("helix-files", HelixFilesElement);
@@ -40,17 +40,49 @@ class HelixFilesElement extends HTMLElement {
     this.button1.addEventListener("click", _event => {
       this.file1.click();
     });
-    this.file0.addEventListener("change", event => {
-      const file = event.target.files[0];
-      this.label0.textContent = file.name;
+    const dispatchChangeFileEvent = (index, file) => {
+      const key = `button${index}`;
+      this[key].textContent = `Change file ${index}... [${file.name}]`;
       const obj = { detail: { file } };
-      this.dispatchEvent(new CustomEvent("change-file0", obj));
+      this.dispatchEvent(new CustomEvent(`change-file${index}`, obj));
+    };
+    this.file0.addEventListener("change", event => {
+      event.preventDefault();
+      dispatchChangeFileEvent(0, event.target.files[0]);
     });
     this.file1.addEventListener("change", event => {
-      const file = event.target.files[0];
-      this.label1.textContent = file.name;
-      const obj = { detail: { file } };
-      this.dispatchEvent(new CustomEvent("change-file1", obj));
+      event.preventDefault();
+      dispatchChangeFileEvent(1, event.target.files[0]);
+    });
+    const createDragHandler = element => event => {
+      event.preventDefault();
+      event.stopPropagation();
+      event.dataTransfer.dropEffect = "copy";
+      const isDragging =
+        event.type === "dragover" || event.type === "dragenter";
+      element.classList.toggle("pal-white", isDragging);
+      element.classList.toggle("pal-green", !isDragging);
+    };
+    const eventNames = [
+      "drag",
+      "dragstart",
+      "dragend",
+      "dragover",
+      "dragenter",
+      "dragleave",
+      "drop"
+    ];
+    for (const name of eventNames) {
+      this.button0.addEventListener(name, createDragHandler(this.button0));
+      this.button1.addEventListener(name, createDragHandler(this.button1));
+    }
+    this.button0.addEventListener("drop", event => {
+      event.preventDefault();
+      dispatchChangeFileEvent(0, event.dataTransfer.files[0]);
+    });
+    this.button1.addEventListener("drop", event => {
+      event.preventDefault();
+      dispatchChangeFileEvent(1, event.dataTransfer.files[0]);
     });
   }
 }
@@ -62,8 +94,8 @@ class HelixPreviewElement extends HTMLElement {
     this.appendChild(getTemplate("#template-helix-preview-element"));
     this.hCanvas = this.querySelector("[data-orientation='horizontal']");
     this.vCanvas = this.querySelector("[data-orientation='vertical']");
-    this.longSize = 192;
-    this.shortSize = 64;
+    this.longSize = IMAGE_LONG_SIZE;
+    this.shortSize = IMAGE_SHORT_SIZE;
     this.scale = 3;
 
     this.hCanvas.width = this.longSize;
@@ -90,36 +122,20 @@ class HelixPreviewElement extends HTMLElement {
 
     const files = document.querySelector("#files");
     files.addEventListener("change-file0", event => {
-      console.log("change-file0", event.detail.file);
       createImageBitmap(event.detail.file).then(bitmap => {
         this.bitmap0 = bitmap;
         this._update();
       });
     });
     files.addEventListener("change-file1", event => {
-      console.log("change-file1", event.detail.file);
       createImageBitmap(event.detail.file).then(bitmap => {
         this.bitmap1 = bitmap;
         this._update();
       });
     });
-
-    globalize({
-      vCtx: this.vCtx,
-      hCtx: this.hCtx,
-      img: this.img
-    });
   }
 
   _update() {
-    console.log({
-      vCtx: this.vCtx,
-      hCtx: this.hCtx,
-      file0: this.file0,
-      file1: this.file1,
-      img: this.img
-    });
-
     this.hCtx.fillStyle = "var(--bit-color0)";
     this.hCtx.fillRect(0, 0, this.hCanvas.width, this.hCanvas.height);
     this.hCtx.drawImage(this.img, 0, 0);
@@ -127,7 +143,13 @@ class HelixPreviewElement extends HTMLElement {
       this._drawRotated(this.hCtx, this.bitmap0, 0, 0, -Math.PI / 2);
     }
     if (this.bitmap1) {
-      this._drawRotated(this.hCtx, this.bitmap1, 0, 96, -Math.PI / 2);
+      this._drawRotated(
+        this.hCtx,
+        this.bitmap1,
+        0,
+        IMAGE_LONG_SIZE / 2,
+        -Math.PI / 2
+      );
     }
 
     this.vCtx.fillStyle = "var(--bit-color0)";
@@ -137,7 +159,7 @@ class HelixPreviewElement extends HTMLElement {
       this.vCtx.drawImage(this.bitmap0, 0, 0);
     }
     if (this.bitmap1) {
-      this.vCtx.drawImage(this.bitmap1, 0, 96);
+      this.vCtx.drawImage(this.bitmap1, 0, IMAGE_LONG_SIZE / 2);
     }
     const imageData = this.vCtx.getImageData(
       0,
@@ -145,8 +167,8 @@ class HelixPreviewElement extends HTMLElement {
       this.vCanvas.width,
       this.vCanvas.height
     );
-    const event = new CustomEvent("update", { detail: { imageData } });
-    this.dispatchEvent(event);
+    const obj = { detail: { imageData } };
+    this.dispatchEvent(new CustomEvent("update", obj));
   }
 
   _drawRotated(ctx, img, x, y, radians) {
@@ -174,15 +196,13 @@ class HelixFontElement extends HTMLElement {
       setTimeout(() => {
         textarea.scrollTop = 0;
         document.getSelection().removeAllRanges();
-      }, 100);
+      }, 200);
     });
   }
 
   _update(imageData) {
     const array = imageDataToArray(imageData);
     const lines = [];
-    const COL_MAX = 8;
-    const ROW_MAX = 32;
     for (let outerCol = COL_MAX - 1; outerCol >= 0; outerCol--) {
       for (let outerRow = 0; outerRow < ROW_MAX; outerRow++) {
         const line = [];
@@ -247,8 +267,5 @@ function imageDataToArray(imageData) {
   }
   return array;
 }
-
-// ---[ HACK ]---------
-globalize({ imageDataToArray });
 
 main();

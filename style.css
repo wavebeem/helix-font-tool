@@ -9,8 +9,13 @@
 }
 
 .pal-green {
-  --bit-color0: hsl(150, 29%, 20%);
+  --bit-color0: hsl(150, 30%, 20%);
   --bit-color1: hsl(150, 60%, 90%);
+}
+
+.pal-white {
+  --bit-color0: hsl(0, 0%, 30%);
+  --bit-color1: hsl(0, 0%, 100%);
 }
 
 helix-file,
