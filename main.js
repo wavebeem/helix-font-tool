@@ -38,7 +38,7 @@ class HelixFilesElement extends HTMLElement {
       const file = event.target.files[0];
       this.button1.textContent = `Change file 1... [${file.name}]`;
       const obj = { detail: { file } };
-      this.dispatchEvent(new CustomEvent(`change-file0`, obj));
+      this.dispatchEvent(new CustomEvent(`change-file1`, obj));
     });
     const createDragHandler = element => event => {
       event.preventDefault();

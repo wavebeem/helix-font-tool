@@ -4,23 +4,23 @@
     sans-serif;
   --font-monospace: "JetBrains Mono", "Cascadia Code", "Menlo", "Consolas",
     monospace;
-  --bit-color0: hsl(190, 30%, 20%);
-  --bit-color1: hsl(190, 60%, 90%);
+  --bit-color0: hsl(190, 80%, 70%);
+  --bit-color1: hsl(190, 30%, 16%);
 }
 
 .pal-green {
-  --bit-color0: hsl(130, 30%, 20%);
-  --bit-color1: hsl(130, 60%, 95%);
+  --bit-color0: hsl(130, 80%, 70%);
+  --bit-color1: hsl(190, 30%, 8%);
 }
 
 .pal-yellow {
-  --bit-color0: hsl(60, 30%, 20%);
-  --bit-color1: hsl(60, 60%, 95%);
+  --bit-color0: hsl(60, 80%, 70%);
+  --bit-color1: hsl(190, 30%, 8%);
 }
 
 .pal-purple {
-  --bit-color0: hsl(280, 30%, 20%);
-  --bit-color1: hsl(280, 60%, 95%);
+  --bit-color0: hsl(290, 80%, 80%);
+  --bit-color1: hsl(190, 30%, 8%);
 }
 
 .dnd-hover {
